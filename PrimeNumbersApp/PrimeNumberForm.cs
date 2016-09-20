@@ -5,18 +5,22 @@ using System.Windows.Forms;
 
 namespace PrimeNumbersApp
 {
-    public partial class Form1 : Form
+    public partial class PrimeNumberForm : Form
     {
-        private System.Timers.Timer _computeFor60Seconds = new System.Timers.Timer(60000);
+        static private int _computeInterval = 60000;
+        static private int _interval = 1000;
 
-        private bool _continue = false;
+        private System.Timers.Timer _computeFor60Seconds = new System.Timers.Timer(_interval);
+
+        private int _continue = _computeInterval;
 
         private Font _font;
         private Brush _brush;
 
-        public Form1()
+        public PrimeNumberForm()
         {
             InitializeComponent();
+            _computeFor60Seconds.Elapsed += OnElapsedTimer;
         }
 
         private static bool IsPrime(int number)
@@ -37,10 +41,12 @@ namespace PrimeNumbersApp
         private void ComputePrimesButton_Click(object sender, EventArgs e)
         {
             ComputePrimesButton.Enabled = false;
-            _computeFor60Seconds.Elapsed += OnEndTimer;
-            _continue = _computeFor60Seconds.Enabled = true;
+            _continue = _computeInterval;
+            _computeFor60Seconds.Enabled = true;
+            progressBar.Maximum = 60;
+            progressBar.Value = 0;
             int start = 2;
-            while (_continue)
+            while (0 < _continue)
             {
                 if (IsPrime(start))
                 {
@@ -48,12 +54,14 @@ namespace PrimeNumbersApp
                 }
                 start++;
             }
+            _computeFor60Seconds.Stop();
             PrintButton.Enabled = true;
         }
 
-        private void OnEndTimer(object sender, ElapsedEventArgs e)
+        private void OnElapsedTimer(object sender, ElapsedEventArgs e)
         {
-            _continue = _computeFor60Seconds.Enabled = false;
+            _continue -= _interval;
+            Invoke(new Action(() => progressBar.Value++));
         }
 
         private void PrintButton_Click(object sender, EventArgs e)
