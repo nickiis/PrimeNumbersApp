@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PrimeGenerator.cs" />
     <Compile Include="PrimeNumberForm.cs">
       <SubType>Form</SubType>
     </Compile>

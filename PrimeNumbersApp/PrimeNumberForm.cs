@@ -24,21 +24,6 @@ namespace PrimeNumbersApp
             _computeFor60Seconds.Elapsed += OnElapsedTimer;
         }
 
-        private static bool IsPrime(int number)
-        {
-            int boundary = (int)Math.Floor(Math.Sqrt(number));
-
-            if (number == 1) return false;
-            if (number == 2) return true;
-
-            for (int i = 2; i <= boundary; ++i)
-            {
-                if (number % i == 0) return false;
-            }
-
-            return true;
-        }
-
         private void ComputePrimesButton_Click(object sender, EventArgs e)
         {
             ComputePrimesButton.Enabled = PrintButton.Enabled = false;
@@ -53,15 +38,18 @@ namespace PrimeNumbersApp
 
         private void ComputePrimes()
         {
-            int start = 2;
+            PrimeGenerator generator = new PrimeGenerator();
+            generator.PrimeNumberGenerated += Generator_PrimeNumberGenerated;
+            int number = 2;
             while (0 < _continue)
             {
-                if (IsPrime(start))
-                {
-                    Invoke(new Action(() => DisplayPrimeNumberTextbox.Text = start.ToString()));
-                }
-                start++;
+                number = generator.GeneratePrimeNumber(number) + 1;
             }
+        }
+
+        private void Generator_PrimeNumberGenerated(object sender, PrimeNumberEventArgs e)
+        {
+            Invoke(new Action(() => DisplayPrimeNumberTextbox.Text = e.PrimeNumber.ToString()));
         }
 
         private void OnElapsedTimer(object sender, ElapsedEventArgs e)
