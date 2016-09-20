@@ -82,6 +82,7 @@ namespace PrimeNumbersApp
         private void PrintPrime_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
             e.Graphics.DrawString("Nickii Sonnenberg: " + DisplayPrimeNumberTextbox.Text, _font, _brush, 0, 0);
+            // TODO: Print out the numbers generated.
         }
     }
 }

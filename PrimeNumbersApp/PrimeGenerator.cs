@@ -1,5 +1,6 @@
 ﻿using System;
 
+// TODO: add unit tests for GeneratePrimeNumber and IsPrime.
 namespace PrimeNumbersApp
 {
     public class PrimeNumberEventArgs : EventArgs
