@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Timers;
 using System.Windows.Forms;
 
@@ -40,28 +41,38 @@ namespace PrimeNumbersApp
 
         private void ComputePrimesButton_Click(object sender, EventArgs e)
         {
-            ComputePrimesButton.Enabled = false;
+            ComputePrimesButton.Enabled = PrintButton.Enabled = false;
             _continue = _computeInterval;
             _computeFor60Seconds.Enabled = true;
             progressBar.Maximum = 60;
             progressBar.Value = 0;
+
+            Thread workerThread = new Thread(new ThreadStart(ComputePrimes));
+            workerThread.Start();
+        }
+
+        private void ComputePrimes()
+        {
             int start = 2;
             while (0 < _continue)
             {
                 if (IsPrime(start))
                 {
-                    DisplayPrimeNumberTextbox.Text = start.ToString();
+                    Invoke(new Action(() => DisplayPrimeNumberTextbox.Text = start.ToString()));
                 }
                 start++;
             }
-            _computeFor60Seconds.Stop();
-            PrintButton.Enabled = true;
         }
 
         private void OnElapsedTimer(object sender, ElapsedEventArgs e)
         {
             _continue -= _interval;
             Invoke(new Action(() => progressBar.Value++));
+            if (0 >= _continue)
+            {
+                _computeFor60Seconds.Stop();
+                Invoke(new Action(() => ComputePrimesButton.Enabled = PrintButton.Enabled = true));
+            }
         }
 
         private void PrintButton_Click(object sender, EventArgs e)
